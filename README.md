@@ -20,7 +20,9 @@ var TestComponent = React.createClass({
   }
 });
 
-var StubbedContextComponent = createStubbedContextComponent(TestComponent, { foo: 'bar' });
+var StubbedContextComponent = createStubbedContextComponent(TestComponent, {
+  foo: 'bar'
+});
 
 React.render(<StubbedContextComponent />, document.body);
 ```
