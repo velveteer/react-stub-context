@@ -1,1 +1,1 @@
-module.exports = require('./createStubbedContextComponents');
+module.exports = require('./createStubbedContextComponent');
