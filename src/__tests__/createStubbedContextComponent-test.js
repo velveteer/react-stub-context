@@ -6,7 +6,7 @@ describe('createStubbedContextcomponent', function() {
   beforeEach(function() {
     React = require.requireActual('react/addons');
     TestUtils = React.addons.TestUtils;
-    TestComponent = React.createClass({ render: function() { return null } });
+    TestComponent = React.createClass({ render: function() { return null; }});
     createStubbedContextComponent = require('../');
   })
 
@@ -46,6 +46,15 @@ describe('createStubbedContextcomponent', function() {
     var stubbedContextComponentElement = TestUtils.renderIntoDocument(<StubbedContextComponent />);
     expect(StubbedContextComponent.getWrappedComponent().contextTypes.taylor).toBeDefined();
     expect(StubbedContextComponent.getWrappedComponent().contextTypes.bad).toBeDefined();
+  });
+
+
+  it('Assigns parent and owner contexts correctly', function() {
+    var StubbedContextComponent = createStubbedContextComponent(TestComponent, { taylor: 'swift' });
+    var stubbedContextComponentElement = TestUtils.renderIntoDocument(<StubbedContextComponent />);
+
+    expect(stubbedContextComponentElement.getWrappedElement()._context.taylor).toEqual('swift');
+    expect(stubbedContextComponentElement.getWrappedParentElement()._context.taylor).toEqual('swift');
   });
 
   it('Hooks up context on target component correctly', function() {

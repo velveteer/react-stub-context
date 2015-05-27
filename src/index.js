@@ -14,11 +14,11 @@ function stubContext(BaseComponent, context) {
     throw new TypeError('createdStubbedContextComponent requires an object');
   }
 
-  BaseComponent.contextTypes = assign({}, BaseComponent.contextTypes, _contextTypes);
-
   var StubbedContextParent = React.createClass({
+    displayName: 'StubbedContextParent',
     childContextTypes: _contextTypes,
     getChildContext() { return _context; },
+    contextTypes: _contextTypes,
 
     render() { 
       return React.Children.only(this.props.children);
@@ -26,18 +26,25 @@ function stubContext(BaseComponent, context) {
   });
 
   var StubbedContextHandler = React.createClass({
+    displayName: 'StubbedContextHandler',
     childContextTypes: _contextTypes,
     getChildContext() { return _context; },
 
     getWrappedElement() { return this._wrappedElement; },
+    getWrappedParentElement() { return this._wrappedParentElement; },
 
     render() {
       this._wrappedElement = <BaseComponent {...this.state} {...this.props} />;
-      return <StubbedContextParent>{this._wrappedElement}</StubbedContextParent>;
+      this._wrappedParentElement = <StubbedContextParent>{this._wrappedElement}</StubbedContextParent>;
+
+      return this._wrappedParentElement;
     }
-  })
+  });
+
+  BaseComponent.contextTypes = assign({}, BaseComponent.contextTypes, _contextTypes);
 
   StubbedContextHandler.getWrappedComponent = function() { return BaseComponent; }
+  StubbedContextHandler.getWrappedParentComponent = function() { return StubbedContextParent; }
 
   return StubbedContextHandler;
 }

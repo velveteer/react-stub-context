@@ -19,6 +19,7 @@
   },
   "scripts": {
     "test": "jest",
+    "example": "webpack-dev-server --config webpack.example.js",
     "prepublish": "babel src/index.js > dist/index.js"
   },
   "author": "Karl Brightman <karl@karlbright.org>",
