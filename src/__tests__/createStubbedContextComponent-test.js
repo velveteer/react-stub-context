@@ -1,4 +1,4 @@
-jest.dontMock('../createStubbedContextComponent');
+jest.dontMock('../');
 
 describe('createStubbedContextcomponent', function() {
   var React, TestUtils, TestComponent, createStubbedContextComponent;
@@ -7,7 +7,7 @@ describe('createStubbedContextcomponent', function() {
     React = require.requireActual('react/addons');
     TestUtils = React.addons.TestUtils;
     TestComponent = React.createClass({ render: function() { return null } });
-    createStubbedContextComponent = require('../createStubbedContextComponent');
+    createStubbedContextComponent = require('../');
   })
 
   it('requires an object', function() {
@@ -33,8 +33,7 @@ describe('createStubbedContextcomponent', function() {
 
   it('Sets context types on target component correctly', function() {
     var StubbedContextComponent = createStubbedContextComponent(TestComponent, { taylor: 'swift' });
-    var stubbedContextComponentElement = TestUtils.renderIntoDocument(<StubbedContextComponent />);
-    expect(stubbedContextComponentElement.getWrappedComponent().contextTypes.taylor).toBeDefined();
+    expect(StubbedContextComponent.getWrappedComponent().contextTypes.taylor).toBeDefined();
   });
 
   it('Merges with existing context types on component', function() {
@@ -42,14 +41,19 @@ describe('createStubbedContextcomponent', function() {
       contextTypes: { bad: React.PropTypes.string },
       render: function() { return null }
     });
+
     var StubbedContextComponent = createStubbedContextComponent(TestComponent, { taylor: 'swift' });
     var stubbedContextComponentElement = TestUtils.renderIntoDocument(<StubbedContextComponent />);
-    expect(stubbedContextComponentElement.getWrappedComponent().contextTypes.taylor).toBeDefined();
-    expect(stubbedContextComponentElement.getWrappedComponent().contextTypes.bad).toBeDefined();
+    expect(StubbedContextComponent.getWrappedComponent().contextTypes.taylor).toBeDefined();
+    expect(StubbedContextComponent.getWrappedComponent().contextTypes.bad).toBeDefined();
   });
 
   it('Hooks up context on target component correctly', function() {
-    TestComponent = React.createClass({ render: function() { return <span>{this.context.taylor}</span> } });
+    TestComponent = React.createClass({
+      render: function() {
+        return <span>{this.context.taylor}</span>;
+      }
+    });
 
     var StubbedContextComponent = createStubbedContextComponent(TestComponent, { taylor: 'swift' });
     var stubbedContextComponentElement = TestUtils.renderIntoDocument(<StubbedContextComponent />);

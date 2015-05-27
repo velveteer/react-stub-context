@@ -1,6 +1,7 @@
 var React = require('react');
+var assign = require('object-assign');
 
-function createStubbedContextComponent(BaseComponent, context) {
+function stubContext(BaseComponent, context) {
   if(typeof context === 'undefined' || context === null) context = {};
 
   var _contextTypes = {}, _context = context;
@@ -13,27 +14,32 @@ function createStubbedContextComponent(BaseComponent, context) {
     throw new TypeError('createdStubbedContextComponent requires an object');
   }
 
-  if(BaseComponent.contextTypes) {
-    Object.assign(BaseComponent.contextTypes, _contextTypes);
-  } else {
-    Object.assign(BaseComponent, { contextTypes: _contextTypes });
-  }
+  BaseComponent.contextTypes = assign({}, BaseComponent.contextTypes, _contextTypes);
 
-  var StubbedContextComponent = React.createClass({
+  var StubbedContextParent = React.createClass({
     childContextTypes: _contextTypes,
     getChildContext() { return _context; },
 
-    getWrappedComponent() { return this._wrappedComponent; },
-    getWrappedElement() { return this._wrappedElement; },
-
     render() { 
-      this._wrappedComponent = BaseComponent;
-      this._wrappedElement = <BaseComponent {...this.state} {...this.props} />;
-      return this._wrappedElement;
+      return React.Children.only(this.props.children);
     }
   });
 
-  return StubbedContextComponent;
+  var StubbedContextHandler = React.createClass({
+    childContextTypes: _contextTypes,
+    getChildContext() { return _context; },
+
+    getWrappedElement() { return this._wrappedElement; },
+
+    render() {
+      this._wrappedElement = <BaseComponent {...this.state} {...this.props} />;
+      return <StubbedContextParent>{this._wrappedElement}</StubbedContextParent>;
+    }
+  })
+
+  StubbedContextHandler.getWrappedComponent = function() { return BaseComponent; }
+
+  return StubbedContextHandler;
 }
 
-module.exports = createStubbedContextComponent;
+module.exports = stubContext;
