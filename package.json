@@ -20,7 +20,7 @@
   "scripts": {
     "test": "jest",
     "example": "webpack-dev-server --config webpack.example.js",
-    "prepublish": "mkdir dist && babel src/index.js > dist/index.js"
+    "prepublish": "mkdir -p dist && babel src/index.js > dist/index.js"
   },
   "author": "Karl Brightman <karl@karlbright.org>",
   "license": "ISC",
